@@ -27,7 +27,7 @@ The main code is found in the "py_answers.py". Alternatively, there is "sql_answ
 Pre-requisites: Pandas, NumPy, Matplotlib.
 ```bash
 # clone repository
-git clone https://github.com/leomakino/NYC-Taxi-Trips
+git clone https://github.com/leomakino/NYC_Taxi_Trips
 
 # change directory to NYC-Taxi-Trips folder
 cd NYC-Taxi-Trips
