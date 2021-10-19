@@ -6,18 +6,248 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style type="text/css">
+        .tg {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .tg td {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            overflow: hidden;
+            padding: 10px 5px;
+            word-break: normal;
+        }
+
+        .tg th {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 10px 5px;
+            word-break: normal;
+        }
+
+        .tg .tg-73oq {
+            border-color: #000000;
+            text-align: left;
+            vertical-align: top
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Análise das Questões</h1>
+    <h1>Análise das Questões - Processo Seletivo</h1>
 
+    <h2>Introdução</h2>
     <div>
-        Este arquivo participa de um processo seletivo. Objetivo do código é responder as questões
+        <p>Este arquivo contém as respostas e análises das questões levantadas pelo case técnido do processo seletivo.
+        </p>
+        <p>O case trouxe datasets relacionados a viagens de táxis na cidade de Nova York e busca responder as seguintes
+            questões:</p>
+        <ul>
+            <li>Questões mínimas:</li>
+            <ol>
+                <li>Qual a distância média percorrida por viagens com no máximo 2 passageiros?</li>
+                <li>Quais os 3 maiores ​ vendors ​ em quantidade total de dinheiro arrecadado?</li>
+                <li>Faça um histograma da distribuição mensal, nos 4 anos, de corridas pagas em dinheiro;</li>
+                <li>Faça um gráfico de série temporal contando a quantidade de gorjetas de cada dia, nos últimos 3 meses
+                    de 2012.</li>
+            </ol>
+            <li>Questões Bônus:</li>
+            <ul>
+                <li>Qual o tempo médio das corridas nos dias de sábado e domingo?</li>
+                <li>Fazer uma visualização em mapa com latitude e longitude de ​ pickups and ​ dropoffs ​ no ano
+                    de 2010;</li>
+                <li>Simular um ​ streaming dos dados dos ​ JSON e fazer uma visualização acompanhando uma
+                    métrica em tempo-real;</li>
+                <li>Conseguir provisionar todo seu ambiente em uma cloud pública, de preferência ​AWS.</li>
+            </ul>
+        </ul>
+
+
+
+        Para Mais informações consultar meu <a href="https://github.com/leomakino/NYC_Taxi_Trips"
+            target="_blank">repositório do Github.</a>
     </div>
 
     <h2>Questão 1</h2>
-    <div>Qual a distância média percorrida por viagens com no máximo 2 passageiros?</div>
-    <div>Resposta: A distância média percorrida por viagens com no máximo 2 passageiros é de 2.94 milhas</div>
+    <div>
+        <p>
+            <b>Resolução:</b>
+        </p>
+        <p>
+            A resposta desta questão buscou pela distância média percorrida por viagens com no máximo 2 passageiros
+            entre os
+            anos de 2009 até 2012. O primeiro passo foi carregar os arquivos json em Dataframes. A função read_NYC_trips
+            foi
+            criada após a primeira falha ao tentar carregar os DataFrames usando a expressão "pd.read_json('string')" e
+            teve
+            como objetivo evitar mudanças repetitivas no código.
+            Em seguida, a função concat foi usada para juntar as informações de todos os anos em um único DataFrame e a
+            partir dele realizar o filtro de informações.
+            O último passo foi selecionar a média (mean()) da distância das viagens (trip_distance) filtrando o número
+            de
+            passageiros até 2 (passenger_count &lt;= 2) e arredondando seu resultado em 3 casas decimais usando a função
+            np.round.
+        </p>
+        </p>
+        <p>
+            <b>Resposta:</b>
+        <p>
+            A distância média percorrida por viagens com no máximo 2 passageiros é de 2.663 milhas
+        </p>
+        <p>
+            <b>Análise:</b>
+        </p>
+        <p>
+            Usam o taxi para de locomoverem a distâncias pequenas....
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut odio nisi. Vestibulum laoreet nunc eget
+            ex maximus mattis. Curabitur non turpis vehicula leo ullamcorper sagittis
+        </p>
+    </div>
+
+    <h2>Questão 2</h2>
+    <div>
+        <p>
+            <b>Resolução:</b>
+        </p>
+        A questão 2 buscou responder os 3 maiores ​fornecedores​ pelo nome em quantidade total de dinheiro arrecadado em
+        todos os anos do Dataset. Para tal pergunta, carregou-se o DataFrame vendor_lookup a partir de arquivo csv
+        contendo os detalhes dos fornecedores. Em seguida, mesclou-se os DataFrames de todas as viagens (all_trips_NYC)
+        com o de fornecedores (vendor_trip_merged) em sua chave em comum, vendor_id. Este passo permitiu criar um novo
+        DataFrame (vendor_trip_merged) que contém os respectivos nomes dos fornecedores. No DataFrame
+        vendor_trip_merged, seleciou-se apenas as colunas de nome e quantia total da viagem (vendor_trip_merged[["name",
+        "total_amount"]).Realizou-se a soma dos valores totais (sum("total_amount")) de acordo com cada fornecedor
+        (groupby("name")). E organizou-se de forma descendente sort_values(by='total_amount', ascending=False) apenas os
+        três maiores (head(3)) arrecadadores.
+
+        <p>
+            <b>Resposta:</b>
+        <p>
+        <div>
+
+            <table class="tg">
+                <thead>
+                    <tr>
+                        <th class="tg-73oq">Fornecedor<br></th>
+                        <th class="tg-73oq">Total de dinheiro arrecadado ($1MM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="tg-73oq">Creative Mobile Technologies, LLC</td>
+                        <td class="tg-73oq">19,549</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-73oq">VeriFone Inc</td>
+                        <td class="tg-73oq">19,043</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-73oq">Dependable Driver Service, Inc</td>
+                        <td class="tg-73oq">2.714</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            <b>Análise:</b>
+        </p>
+        <p>
+            Dois fornecedores predominantes....
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut odio nisi. Vestibulum laoreet nunc eget
+            ex maximus mattis. Curabitur non turpis vehicula leo ullamcorper sagittis
+        </p>
+    </div>
+    <h2>Questão 3</h2>
+    <div>
+        <p>
+            <b>Resolução:</b>
+        <p>
+        <p>
+            Explicação
+        </p>
+        <p>
+            <b>Resposta:</b>
+        <p>
+
+
+        <div id="figura">
+            <img src="data:image/png;base64,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"
+                alt="">
+
+        </div>
+        <p>
+            <b>Análise:</b>
+        </p>
+        <p>
+            Meses de janeiro dezembro(ou janeiro?) tem baixo indice de gorjetas.....
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut odio nisi. Vestibulum laoreet nunc eget
+            ex maximus mattis. Curabitur non turpis vehicula leo ullamcorper sagittis
+        </p>
+    </div>
+    <h2>Questão 4</h2>
+
+    <div>
+        <p>
+            <b>Resolução:</b>
+        </p>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut odio nisi. Vestibulum laoreet nunc eget
+            ex maximus mattis. Curabitur non turpis vehicula leo ullamcorper sagittis
+        </p>
+        <p>
+            <b>Resultado:</b>
+        </p>
+
+        pickup_datetime
+        10-01 588
+        10-02 594
+        10-03 627
+        10-04 578
+        10-05 627
+        10-06 601
+        10-07 617
+        10-08 542
+        10-09 603
+        10-10 613
+        10-11 582
+        10-12 599
+        10-13 599
+        10-14 561
+        10-15 596
+        10-16 584
+        10-17 657
+        10-18 614
+        10-19 589
+        10-20 629
+        10-21 625
+        10-22 595
+        10-23 617
+        10-24 587
+        10-25 550
+        10-26 617
+        10-27 561
+
+        <p>
+            <b>Análise:</b>
+        </p>
+        <p>
+            A partir do dia 28/10, não há registros de gorjetas
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ut odio nisi. Vestibulum laoreet nunc eget
+            ex maximus mattis. Curabitur non turpis vehicula leo ullamcorper sagittis
+        </p>
+    </div>
+    <div>
+
+    </div>
 </body>
 
 </html>
