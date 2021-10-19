@@ -16,9 +16,9 @@ The dataset contains the taxi trips, their companies, and the payment specificat
 # Questions
 The case questions are:
   1. What is the average distance traveled for trips with a maximum of 2 passengers;
-  1. Which are the top 3 vendors in a total amount of money raised;
-  1. Make a histogram of the monthly distribution, over the 4 years, of runs paid for in cash;
-  1. Make a time series graph counting the number of tips each day for the last 3 months of 2012.
+  2. Which are the top 3 vendors in a total amount of money raised;
+  3. Make a histogram of the monthly distribution, over the 4 years, of runs paid for in cash;
+  4. Make a time series graph counting the number of tips each day for the last 3 months of 2012.
 
 # Code Organization
 The main code is found in the "py_answers.py". Alternatively, there is "sql_answers.sql" answering the first two questions using SQL.
