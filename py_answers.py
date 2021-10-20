@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import matplotlib.dates as mdates
+import sys
 
 
 def read_NYC_trips(path):
@@ -16,17 +18,18 @@ def read_NYC_trips(path):
     """
     return pd.read_json(path, lines=True)
 
+
 # Load the trips to data frames
 trips_NYC_2009 = read_NYC_trips(
-    'sample_2009.json')
+    'https://s3.amazonaws.com/data-sprints-eng-test/data-sample_data-nyctaxi-trips-2009-json_corrigido.json')
 trips_NYC_2010 = read_NYC_trips(
-    'sample_2009.json')
+    'https://s3.amazonaws.com/data-sprints-eng-test/data-sample_data-nyctaxi-trips-2010-json_corrigido.json')
 trips_NYC_2011 = read_NYC_trips(
-    'sample_2009.json')
+    'https://s3.amazonaws.com/data-sprints-eng-test/data-sample_data-nyctaxi-trips-2011-json_corrigido.json')
 trips_NYC_2012 = read_NYC_trips(
-    'sample_2009.json')
+    'https://s3.amazonaws.com/data-sprints-eng-test/data-sample_data-nyctaxi-trips-2012-json_corrigido.json')
 
-# Convert argument from ISO8601 to datetime.
+# Convert Pickup string to datetime.
 trips_NYC_2009["pickup_datetime"] = pd.to_datetime(
     trips_NYC_2009["pickup_datetime"])
 trips_NYC_2010["pickup_datetime"] = pd.to_datetime(
@@ -35,6 +38,17 @@ trips_NYC_2011["pickup_datetime"] = pd.to_datetime(
     trips_NYC_2011["pickup_datetime"])
 trips_NYC_2012["pickup_datetime"] = pd.to_datetime(
     trips_NYC_2012["pickup_datetime"])
+
+# Convert Dropoff string to datetime.
+trips_NYC_2009["dropoff_datetime"] = pd.to_datetime(
+    trips_NYC_2009["dropoff_datetime"])
+trips_NYC_2010["dropoff_datetime"] = pd.to_datetime(
+    trips_NYC_2010["dropoff_datetime"])
+trips_NYC_2011["dropoff_datetime"] = pd.to_datetime(
+    trips_NYC_2011["dropoff_datetime"])
+trips_NYC_2012["dropoff_datetime"] = pd.to_datetime(
+    trips_NYC_2012["dropoff_datetime"])
+
 
 # Union all the dataframes
 all_trips_NYC = pd.concat(
@@ -61,7 +75,7 @@ print(vendor_trip_merged[["name", "total_amount"]
 
 # ===Question 3 Section===
 #
-# Load the CSV and assign it to the variable
+#
 payment_lookup = pd.read_csv(
     "https://s3.amazonaws.com/data-sprints-eng-test/data-payment_lookup-csv.csv", nrows=17, skiprows=1)
 
@@ -72,7 +86,7 @@ payment_trip_merged = all_trips_NYC.merge(
 cash_trips_by_month = payment_trip_merged["pickup_datetime"].dt.strftime('%Y-%m')[payment_trip_merged.payment_lookup ==
                                                                                   "Cash"].sort_values()
 
-# Output
+# Plot
 plt.hist(cash_trips_by_month, bins=[*range(49)], edgecolor='black')
 plt.title('Cash Trips by Year-Month')
 plt.xlabel('Year-Month')
@@ -86,14 +100,36 @@ plt.show()
 end_year_expression = (trips_NYC_2012["pickup_datetime"].dt.month == 10) | (trips_NYC_2012[
     "pickup_datetime"].dt.month == 11) | (trips_NYC_2012["pickup_datetime"].dt.month == 12)
 
-print("Number of tips each day for the last 3 months of 2012: ")
-print(trips_NYC_2012[end_year_expression][trips_NYC_2012.tip_amount != 0].groupby(
-    trips_NYC_2012.pickup_datetime.dt.strftime('%m-%d')).tip_amount.size())
+# Load the datetime and tips in a Series
+datetime_tips_series = trips_NYC_2012[end_year_expression][trips_NYC_2012.tip_amount != 0].groupby(
+    trips_NYC_2012.pickup_datetime.dt.strftime('%m-%d')).tip_amount.size()
+
+# Convert Serie to DataFrame
+df = datetime_tips_series.to_frame()
+
+# List with the tip_amount sizes grouped by day
+tips = [row for row in df["tip_amount"]]
+
+# List of days of the las 3 month
+dates = pd.date_range(start='2012-10-01', end='2012-12-31').tolist()
+
+# Plot
+plt.title('Number of tips each day for the last 3 months of 2012')
+plt.xlabel('Month-Day')
+plt.ylabel('Number of tips')
+x_values = dates
+y_values = tips + [0]*65
+ax = plt.gca()
+formatter = mdates.DateFormatter("%m-%d")
+ax.xaxis.set_major_formatter(formatter)
+plt.plot(x_values, y_values)
+
+# ===Bônus Section===
+#
+# WHERE statement to extract weekend days
+weekend_expression = (trips_NYC_2009["pickup_datetime"].dt.weekday == 5) | (trips_NYC_2009[
+    "pickup_datetime"].dt.weekday == 6)
 
 # Output
-# plt.title('Number of tips each day for the last 3 months of 2012')
-# plt.xlabel('Number of tips')
-# plt.ylabel('Month-Day')
-# plt.plot(trips_NYC_2012[end_year_expression].pickup_datetime,
-#          trips_NYC_2012[end_year_expression].groupby("pickup_datetime").tip_amount.size())
-# plt.show()
+print("O tempo médio das corridas nos dias de sábado e domingo foi de {}".format(all_trips_NYC["dropoff_datetime"][weekend_expression].sub(
+    all_trips_NYC["pickup_datetime"][weekend_expression]).mean()))
